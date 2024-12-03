@@ -1,36 +1,42 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# Erstelle ein Vollbildfenster auf allen Monitoren
-$screens = [System.Windows.Forms.Screen]::AllScreens
-foreach ($screen in $screens) {
-    $form = New-Object System.Windows.Forms.Form
-    $form.Text = 'Installation läuft'
-    $form.StartPosition = 'Manual'
-    $form.BackColor = 'Blue'
-    $form.ForeColor = 'White'
-    $form.FormBorderStyle = 'None'
-    $form.WindowState = 'Maximized'
-    $form.Bounds = $screen.Bounds
-    $form.TopMost = $true
+# Funktion zur Anzeige der Nachricht
+function Show-FullScreenMessage {
+    param (
+        [string]$Message = "Die Windows 11 Installation dauert bis zu 2 Stunden." + [Environment]::NewLine +
+                           "Bitte schalten Sie den PC nicht aus!" + [Environment]::NewLine + [Environment]::NewLine +
+                           "Der PC startet automatisch neu.",
+        [string]$BackgroundColor = "Blue",
+        [string]$TextColor = "White"
+    )
 
-    # Erstelle die Nachricht mit korrekten Zeilenumbrüchen
-    $label = New-Object System.Windows.Forms.Label
-    $label.Text = "Die Windows 11 Installation dauert bis zu 2 Stunden." + [Environment]::NewLine +
-                  "Bitte schalten Sie den PC nicht aus!" + [Environment]::NewLine + [Environment]::NewLine +
-                  "Der PC startet automatisch neu."
-    $label.Font = New-Object System.Drawing.Font('Arial', 32, [System.Drawing.FontStyle]::Bold)
-    $label.ForeColor = 'White'
-    $label.BackColor = 'Blue'
-    $label.AutoSize = $false
-    $label.TextAlign = 'MiddleCenter'
-    $label.Dock = 'Fill'
+    # Erstelle Vollbildfenster auf jedem Monitor
+    [System.Windows.Forms.Screen]::AllScreens | ForEach-Object {
+        $form = New-Object System.Windows.Forms.Form
+        $form.WindowState = 'Maximized'
+        $form.FormBorderStyle = 'None'
+        $form.BackColor = $BackgroundColor
+        $form.Bounds = $_.Bounds
+        $form.TopMost = $true
 
-    # Füge die Nachricht zum Fenster hinzu
-    $form.Controls.Add($label)
-    $form.Add_Shown({ $form.Activate() })
-    $form.Show()
+        # Füge die Nachricht hinzu
+        $label = New-Object System.Windows.Forms.Label
+        $label.Text = $Message
+        $label.Font = New-Object System.Drawing.Font('Arial', 32, [System.Drawing.FontStyle]::Bold)
+        $label.ForeColor = $TextColor
+        $label.TextAlign = 'MiddleCenter'
+        $label.Dock = 'Fill'
+
+        $form.Controls.Add($label)
+        $form.Add_Shown({ 
+            $form.Activate()
+            Start-Sleep -Seconds 10 # Nachricht 10 Sekunden anzeigen
+            $form.Close() # Fenster automatisch schließen
+        })
+        $form.ShowDialog() # Fenster als modales Fenster öffnen
+    }
 }
 
-# Halte die Fenster offen
-[System.Windows.Forms.Application]::Run()
+# Nachricht anzeigen und Skript beenden
+Show-FullScreenMessage
