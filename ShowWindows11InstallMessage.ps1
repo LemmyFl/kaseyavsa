@@ -16,7 +16,7 @@ foreach ($screen in $screens) {
 
     # Erstelle die Nachricht
     $label = New-Object System.Windows.Forms.Label
-    $label.Text = 'Die Windows 11 Installation läuft. Bitte schalten Sie den PC nicht aus!'
+    $label.Text = 'Die Windows 11 Installation dauert bis zu 2 Stunden. Bitte schalten Sie den PC nicht aus! Der PC startet automatisch neu.'
     $label.Font = New-Object System.Drawing.Font('Arial', 32, [System.Drawing.FontStyle]::Bold)
     $label.ForeColor = 'White'
     $label.BackColor = 'Blue'
