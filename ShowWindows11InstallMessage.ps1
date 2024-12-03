@@ -14,9 +14,11 @@ foreach ($screen in $screens) {
     $form.Bounds = $screen.Bounds
     $form.TopMost = $true
 
-    # Erstelle die Nachricht
+    # Erstelle die Nachricht mit korrekten Zeilenumbrüchen
     $label = New-Object System.Windows.Forms.Label
-    $label.Text = 'Die Windows 11 Installation dauert bis zu 2 Stunden.\nBitte schalten Sie den PC nicht aus!\n\nDer PC startet automatisch neu.'
+    $label.Text = "Die Windows 11 Installation dauert bis zu 2 Stunden." + [Environment]::NewLine +
+                  "Bitte schalten Sie den PC nicht aus!" + [Environment]::NewLine + [Environment]::NewLine +
+                  "Der PC startet automatisch neu."
     $label.Font = New-Object System.Drawing.Font('Arial', 32, [System.Drawing.FontStyle]::Bold)
     $label.ForeColor = 'White'
     $label.BackColor = 'Blue'
