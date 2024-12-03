@@ -26,6 +26,11 @@ Start-Process powershell -ArgumentList "-NoProfile -WindowStyle Hidden -Command 
         # Nachricht zum Fenster hinzufügen
         $form.Controls.Add($label)
         $form.Add_Shown({ $form.Activate() })
-        $form.ShowDialog() # Fenster dauerhaft offen lassen
+
+        # Fenster dauerhaft offen lassen
+        $form.ShowDialog()
     }
+
+    # Halte die Anwendung aktiv
+    [System.Windows.Forms.Application]::Run()
 }"
