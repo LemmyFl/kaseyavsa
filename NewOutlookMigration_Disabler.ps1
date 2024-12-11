@@ -4,6 +4,5 @@ foreach ($user in $users) {
     if (-not (Test-Path -Path $path)) {
         New-Item -Path $path -Force | Out-Null
     }
-    # Setze den Registry-Wert
     Set-ItemProperty -Path $path -Name "NewOutlookMigrationUserSetting" -Value 0 -Type DWord
 }
