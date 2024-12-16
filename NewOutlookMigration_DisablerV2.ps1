@@ -8,8 +8,6 @@ $Keys = @{
     'NewOutlookAutoMigrationRetryIntervals' = 0
     'DoNewOutlookAutoMigration' = 0
 }
-
-# Registry-Schlüssel erstellen/ändern
 New-Item -Path $RegPath -Force | Out-Null
 foreach ($Key in $Keys.Keys) {
     Set-ItemProperty -Path $RegPath -Name $Key -Value $Keys[$Key]
@@ -17,7 +15,12 @@ foreach ($Key in $Keys.Keys) {
 Write-Host '[INFO] Registry-Werte für Outlook-Migration erfolgreich gesetzt.'
 "@
 
-$ScriptPath = "C:\Windows\Temp\DisableNewOutlookMigration.ps1"
+$ScriptPath = "C:\kworking\DisableNewOutlookMigration.ps1"
+
+if (-not (Test-Path "C:\kworking")) {
+    New-Item -ItemType Directory -Path "C:\kworking" | Out-Null
+    Write-Host "[INFO] Ordner 'C:\kworking' wurde erstellt."
+}
 
 Set-Content -Path $ScriptPath -Value $ActionScript -Encoding UTF8
 
@@ -30,3 +33,4 @@ schtasks.exe /create `
     /f | Out-Null
 
 Write-Host "[INFO] Task '$TaskName' wurde erstellt. Skript wird bei jedem Benutzer-Login ausgeführt."
+Write-Host "[INFO] Ausführbares Skript wurde unter '$ScriptPath' gespeichert."
