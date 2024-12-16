@@ -12,6 +12,4 @@ foreach ($user in $users) {
     Set-ItemProperty -Path $path -Name "NewOutlookMigrationUserSetting" -Value 0 -Type DWord
     Set-ItemProperty -Path $path -Name "NewOutlookAutoMigrationRetryIntervals" -Value 0 -Type DWord
     Set-ItemProperty -Path $path -Name "DoNewOutlookAutoMigration" -Value 0 -Type DWord
-    Set-ItemProperty -Path $path -Name "DisableOutlookPSTCreation" -Value 1 -Type DWord
-    Set-ItemProperty -Path $path -Name "DisableCrossAccountAutoDiscover" -Value 1 -Type DWord
 }
