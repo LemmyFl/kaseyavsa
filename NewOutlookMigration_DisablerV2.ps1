@@ -6,7 +6,7 @@ $Keys = @{
     'NewOutlookAutoMigrationRetryIntervals' = 0
     'DoNewOutlookAutoMigration' = 0
 }
-New-Item -Path $RegPath -Force
+New-Item -Path $RegPath -Force | Out-Null
 foreach ($Key in $Keys.Keys) {
     Set-ItemProperty -Path $RegPath -Name $Key -Value $Keys[$Key]
 }
@@ -14,7 +14,7 @@ foreach ($Key in $Keys.Keys) {
 $ScriptPath = "C:\kworking\DisableNewOutlookMigration.ps1"
 
 if (-not (Test-Path "C:\kworking")) {
-    New-Item -ItemType Directory -Path "C:\kworking"
+    New-Item -ItemType Directory -Path "C:\kworking" | Out-Null
 }
 Set-Content -Path $ScriptPath -Value $ActionScript -Encoding UTF8
 
@@ -22,6 +22,6 @@ schtasks.exe /create `
     /tn $TaskName `
     /tr "powershell.exe -ExecutionPolicy Bypass -File $ScriptPath" `
     /sc onlogon `
-    /ru "%username%" `
+    /ru SYSTEM `
     /rl HIGHEST `
-    /f
+    /f | Out-Null
