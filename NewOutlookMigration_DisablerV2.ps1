@@ -1,20 +1,32 @@
-# Beispiel: Erstellt oder entfernt einen Task, der bei Login Registry-Werte in HKCU setzt.
-param([switch]$Remove)
+$TaskName = "DisableNewOutlookMigration"
 
-$TaskName   = "MyLogonTask"
-$RegPath    = "HKCU:\Software\MyCompany"
-$RegValue   = "TestValue"
-$RegData    = 1
-
-if ($Remove) {
-    schtasks /delete /tn $TaskName /f | Out-Null
-    Write-Host "[INFO] Task entfernt."
-    return
+$ActionScript = @"
+# Aktion: Registry-Einträge in HKCU setzen, um die Outlook-Migration zu deaktivieren
+$RegPath = 'HKCU:\Software\Policies\Microsoft\Office\16.0\Outlook\Preferences'
+$Keys = @{
+    'NewOutlookMigrationUserSetting' = 0
+    'NewOutlookAutoMigrationRetryIntervals' = 0
+    'DoNewOutlookAutoMigration' = 0
 }
 
-# 1) Aktion definieren: PowerShell-Befehl, der bei jedem Logon Registry schreibt
-$ActionCmd = "powershell.exe -command `"New-Item -Path '$RegPath' -Force; Set-ItemProperty -Path '$RegPath' -Name '$RegValue' -Value $RegData`""
+# Registry-Schlüssel erstellen/ändern
+New-Item -Path $RegPath -Force | Out-Null
+foreach ($Key in $Keys.Keys) {
+    Set-ItemProperty -Path $RegPath -Name $Key -Value $Keys[$Key]
+}
+Write-Host '[INFO] Registry-Werte für Outlook-Migration erfolgreich gesetzt.'
+"@
 
-# 2) Scheduled Task anlegen (onlogon, any user)
-schtasks /create /tn $TaskName /tr $ActionCmd /sc onlogon /ru "%username%" /rl HIGHEST /f | Out-Null
-Write-Host "[INFO] Task angelegt: $TaskName"
+$ScriptPath = "C:\Windows\Temp\DisableNewOutlookMigration.ps1"
+
+Set-Content -Path $ScriptPath -Value $ActionScript -Encoding UTF8
+
+schtasks.exe /create `
+    /tn $TaskName `
+    /tr "powershell.exe -ExecutionPolicy Bypass -File $ScriptPath" `
+    /sc onlogon `
+    /ru "%username%" `
+    /rl HIGHEST `
+    /f | Out-Null
+
+Write-Host "[INFO] Task '$TaskName' wurde erstellt. Skript wird bei jedem Benutzer-Login ausgeführt."
