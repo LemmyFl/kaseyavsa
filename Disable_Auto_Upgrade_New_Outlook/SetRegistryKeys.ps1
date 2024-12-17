@@ -16,15 +16,12 @@ $RegistryValues = @{
     'DoNewOutlookAutoMigration'             = 0
 }
 
-$UserProfiles = Get-WmiObject -Class Win32_UserProfile | Where-Object { $_.Loaded -eq $true -and $_.Special -eq $false }
+$CurrentUserSID = ([System.Security.Principal.WindowsIdentity]::GetCurrent()).User.Value
 
-foreach ($Profile in $UserProfiles) {
-    $SID = $Profile.SID
-    $RegPath = "Registry::HKEY_USERS\$SID\$RegistrySubPath"
+$RegPath = "Registry::HKEY_USERS\$CurrentUserSID\$RegistrySubPath"
 
-    New-Item -Path $RegPath -Force -ErrorAction SilentlyContinue | Out-Null
+New-Item -Path $RegPath -Force -ErrorAction SilentlyContinue | Out-Null
 
-    foreach ($Key in $RegistryValues.Keys) {
-        Set-ItemProperty -Path $RegPath -Name $Key -Value $RegistryValues[$Key] -Type DWord -Force
-    }
+foreach ($Key in $RegistryValues.Keys) {
+    Set-ItemProperty -Path $RegPath -Name $Key -Value $RegistryValues[$Key] -Type DWord -Force
 }
