@@ -75,27 +75,21 @@ function Save-RegistryScript {
 
     # Script content to set registry keys for all users
     $ActionScript = @"
+`$RegPath = 'HKCU:\Software\Policies\Microsoft\Office\16.0\Outlook\Preferences'
 `$Keys = @{
     'NewOutlookMigrationUserSetting'        = 0
     'NewOutlookAutoMigrationRetryIntervals' = 0
     'DoNewOutlookAutoMigration'             = 0
 }
 
-`$HkuPath = "Registry::HKEY_USERS"
-`$ExcludedSIDs = @("S-1-5-18", "S-1-5-19", "S-1-5-20")
+# Ensure the registry path exists
+if (-not (Test-Path `$RegPath)) {
+    New-Item -Path `$RegPath -Force | Out-Null
+}
 
-Get-ChildItem -Path `$HkuPath | Where-Object {
-    `$_.PSChildName -notin `$ExcludedSIDs -and `$_.PSChildName -match '^S-1-5-21'
-} | ForEach-Object {
-    `$UserSid = `$_.PSChildName
-    `$RegPath = "Registry::HKEY_USERS`\$UserSid\Software\Policies\Microsoft\Office\16.0\Outlook\Preferences"
-
-    if (-not (Test-Path -Path `$RegPath)) {
-        New-Item -Path `$RegPath -Force | Out-Null
-    }
-    foreach (`$Key in `$Keys.Keys) {
-        Set-ItemProperty -Path `$RegPath -Name `$Key -Value `$Keys[`$Key] -Force
-    }
+# Set the registry keys
+foreach (`$Key in `$Keys.Keys) {
+    Set-ItemProperty -Path `$RegPath -Name `$Key -Value `$Keys[`$Key] -Force
 }
 "@
 
