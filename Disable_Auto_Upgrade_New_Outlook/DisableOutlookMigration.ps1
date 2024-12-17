@@ -26,7 +26,6 @@ function Register-LogonTask {
         /tr "powershell.exe -ExecutionPolicy Bypass -File `"$DownloadedScript`"" `
         /sc ONLOGON `
         /rl LIMITED `
-        /u
         /f
 }
 
