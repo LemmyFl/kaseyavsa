@@ -1,6 +1,6 @@
 <#
 .NOTES
-  Version:          1.2.0
+  Version:          1.3.0
   Author:           <LemmyFL>
   Last Change Date: 17.12.2024
   Purpose:          Download and execute SetRegistryKeys.ps1 script, and create a scheduled task for user logon.
@@ -30,7 +30,6 @@ function Register-LogonTask {
         /tn "$TaskName" `
         /tr "powershell.exe -ExecutionPolicy Bypass -File `"$DownloadedScript`"" `
         /sc ONLOGON `
-        /ru "SYSTEM" `
         /rl HIGHEST `
         /f
 }
