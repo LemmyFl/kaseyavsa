@@ -19,7 +19,7 @@ function Download-SetRegistryKeys {
     Invoke-WebRequest -Uri "https://raw.githubusercontent.com/LemmyFl/kaseyavsa/refs/heads/main/Disable_Auto_Upgrade_New_Outlook/SetRegistryKeys.ps1" -OutFile $DownloadedScript
 }
 
-function Register-LogonTask {
+function create-LogonTask {
 
     schtasks /create `
         /tn "$TaskName" `
@@ -33,4 +33,4 @@ function Register-LogonTask {
 
 Download-SetRegistryKeys
 
-Register-LogonTask
+create-LogonTask
