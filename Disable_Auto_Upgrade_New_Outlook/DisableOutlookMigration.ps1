@@ -8,7 +8,7 @@
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
-$ScriptDirectory = "C:\kworking"
+$ScriptDirectory = "C:\ProgramData\Scripts"
 $DownloadedScript = Join-Path -Path $ScriptDirectory -ChildPath "SetRegistryKeys.ps1"
 $TaskName = "DisableOutlookMigration"
 
@@ -30,6 +30,7 @@ function create-LogonTask {
 }
 
 #-----------------------------------------------------------[Execution]-----------------------------------------------------------
+mkdir C:\ProgramData\Scripts
 
 Download-SetRegistryKeys
 
