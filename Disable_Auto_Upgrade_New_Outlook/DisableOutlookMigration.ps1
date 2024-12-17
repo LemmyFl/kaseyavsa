@@ -25,19 +25,14 @@ function Download-SetRegistryKeys {
 }
 
 function Register-LogonTask {
-    # Get all user profiles from C:\Users (local users)
-    $UserProfiles = Get-ChildItem -Path "C:\Users" -Directory | Select-Object -ExpandProperty Name
-
-    foreach ($UserProfile in $UserProfiles) {
-        # Register a scheduled task for each user profile
-        schtasks /create `
-            /tn "$TaskName-$UserProfile" `
-            /tr "powershell.exe -ExecutionPolicy Bypass -File `"$DownloadedScript`"" `
-            /sc ONLOGON `
-            /ru "$UserProfile" `
-            /rl HIGHEST `
-            /f
-    }
+    # Register a scheduled task to run for all users at logon
+    schtasks /create `
+        /tn "$TaskName" `
+        /tr "powershell.exe -ExecutionPolicy Bypass -File `"$DownloadedScript`"" `
+        /sc ONLOGON `
+        /ru "SYSTEM" `
+        /rl HIGHEST `
+        /f
 }
 
 #-----------------------------------------------------------[Execution]-----------------------------------------------------------
