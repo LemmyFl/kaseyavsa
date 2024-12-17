@@ -44,6 +44,24 @@ foreach (`$SID in `$UserSIDs) {
     Set-Content -Path $ScriptPath -Value $ActionScript -Encoding UTF8 -Force
 }
 
+function Register-RunOnceTask {
+    param (
+        [string]$TaskName = "RunOnceTask",
+        [string]$ScriptPath
+    )
+
+    if (-not (Test-Path $ScriptPath)) { return }
+
+    Start-Process -FilePath "schtasks.exe" -ArgumentList @(
+        "/create", "/tn", "`"$TaskName`"",
+        "/tr", "`"powershell.exe -ExecutionPolicy Bypass -File `"$ScriptPath`"`"",
+        "/sc", "ONLOGON",
+        "/rl", "HIGHEST",
+        "/f",
+        "/z"
+    ) -NoNewWindow -Wait
+}
+
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
 Save-RegistryScript
