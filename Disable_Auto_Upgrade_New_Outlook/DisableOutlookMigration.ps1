@@ -36,11 +36,6 @@ function Register-LogonTask {
 
 #-----------------------------------------------------------[Execution]-----------------------------------------------------------
 
-# Step 1: Download the external SetRegistryKeys.ps1 script
 Download-SetRegistryKeys
 
-# Step 2: Register the logon task
 Register-LogonTask
-
-# Step 3: Execute the downloaded script immediately
-Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -File `"$DownloadedScript`"" -Wait
