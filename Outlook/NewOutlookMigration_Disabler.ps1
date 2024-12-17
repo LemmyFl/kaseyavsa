@@ -1,68 +1,63 @@
 <#
 .NOTES
-  Version:          1.0.2
-  Author:           LemmyFL
+  Version:          1.1.0
+  Author:           LemmyFL (Optimized by ChatGPT)
   Last Change Date: 17.12.2024
-  Purpose:          Creates a one-time scheduled task to set registry keys at first user logon.
+  Purpose:          Disable Outlook migration settings and create a one-time task for user logon.
 #>
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
-$TaskName   = "DisableNewOutlookMigration_RunOnce"
-$ScriptPath = "C:\kworking\SetOutlookRegistryKeys.ps1"
+# Script and Task Settings
+$ScriptPath = "C:\kworking\NewOutlookDisable.ps1"
+$TaskName   = "DisableOutlookMigration"
 
-#-----------------------------------------------------------[Functions]------------------------------------------------------------
-
-function Save-DisableOutlookMigrationScript {
-    $ActionScript = @"
-`$RegSubPath = "Software\Policies\Microsoft\Office\16.0\Outlook\Preferences"
-`$RegistryValues = @{
+# Registry Configuration
+$RegistrySubPath = "Software\Policies\Microsoft\Office\16.0\Outlook\Preferences"
+$RegistryValues = @{
     'NewOutlookMigrationUserSetting'        = 0
     'NewOutlookAutoMigrationRetryIntervals' = 0
     'DoNewOutlookAutoMigration'             = 0
 }
 
-`$UserSIDs = Get-WmiObject -Class Win32_UserProfile | Where-Object { 
-    `$\_.Loaded -eq `$true -and `$\_.Special -eq `$false 
-} | Select-Object -ExpandProperty SID
+#-----------------------------------------------------------[Functions]-----------------------------------------------------------
 
-foreach (`$SID in `$UserSIDs) {
-    `$RegPath = "Registry::HKEY_USERS\`$SID\`$RegSubPath"
+function Save-DisableOutlookMigrationScript {
+    # Generate script content dynamically
+    $ScriptContent = @"
+`$RegistrySubPath = "$RegistrySubPath"
+`$RegistryValues = @{ $( $RegistryValues.GetEnumerator() | ForEach-Object { "'$($_.Key)' = $($_.Value)" } -join "; " ) }
 
-    New-Item -Path `$RegPath -Force | Out-Null
-
-    foreach (`$Key in `$RegistryValues.Keys) {
-        Set-ItemProperty -Path `$RegPath -Name `$Key -Value `$RegistryValues[`$Key] -Type DWord -Force
+`$UserProfiles = Get-WmiObject -Class Win32_UserProfile | Where-Object { `$_.Loaded -and -not `$_.Special }
+foreach (`$Profile in `$UserProfiles) {
+    `$RegPath = "Registry::HKEY_USERS\`$(`$Profile.SID)\`$RegistrySubPath"
+    New-Item -Path `$RegPath -Force -ErrorAction SilentlyContinue | Out-Null
+    `$RegistryValues.GetEnumerator() | ForEach-Object {
+        Set-ItemProperty -Path `$RegPath -Name `$_.Key -Value `$_.Value -Type DWord -Force
     }
 }
 "@
-
-    # Ensure the directory exists
-    New-Item -ItemType Directory -Path (Split-Path -Path $ScriptPath -Parent) -Force -ErrorAction SilentlyContinue | Out-Null
-
-    # Save the script content to the specified path
-    Set-Content -Path $ScriptPath -Value $ActionScript -Encoding UTF8 -Force
+    # Save the script to the specified path
+    Set-Content -Path $ScriptPath -Value $ScriptContent -Encoding UTF8 -Force
 }
 
-function Register-RunOnceTask {
-    param (
-        [string]$TaskName = "RunOnceTask",
-        [string]$ScriptPath
-    )
-
-    if (-not (Test-Path $ScriptPath)) { return }
-
-    Start-Process -FilePath "schtasks.exe" -ArgumentList @(
-        "/create", "/tn", "`"$TaskName`"",
-        "/tr", "`"powershell.exe -ExecutionPolicy Bypass -File `"$ScriptPath`"`"",
-        "/sc", "ONLOGON",
-        "/rl", "HIGHEST",
-        "/f",
-        "/z"
-    ) -NoNewWindow -Wait
+function Register-LogonTask {
+    # Register a one-time scheduled task for user logon
+    schtasks /create `
+        /tn "$TaskName" `
+        /tr "powershell.exe -ExecutionPolicy Bypass -File `"$ScriptPath`"" `
+        /sc ONLOGON `
+        /rl HIGHEST `
+        /f /z
 }
 
-#-----------------------------------------------------------[Execution]------------------------------------------------------------
+#-----------------------------------------------------------[Execution]-----------------------------------------------------------
 
-Save-RegistryScript
-Register-RunOnceTask
+# Step 1: Create the script
+Save-DisableOutlookMigrationScript
+
+# Step 2: Register the logon task
+Register-LogonTask
+
+# Step 3: Execute the script immediately
+& powershell.exe -ExecutionPolicy Bypass -File $ScriptPath
