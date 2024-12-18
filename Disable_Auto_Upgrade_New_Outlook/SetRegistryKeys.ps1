@@ -16,9 +16,7 @@ $RegistryValues = @{
     'DoNewOutlookAutoMigration'             = 0
 }
 
-$CurrentUserSID = ([System.Security.Principal.WindowsIdentity]::GetCurrent()).User.Value
-
-$RegPath = "Registry::HKEY_USERS\$CurrentUserSID\$RegistrySubPath"
+$RegPath = "Registry::HKEY_CURRENT_USER\$RegistrySubPath"
 
 New-Item -Path $RegPath -Force -ErrorAction SilentlyContinue | Out-Null
 
