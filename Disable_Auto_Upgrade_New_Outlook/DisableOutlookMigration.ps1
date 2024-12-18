@@ -24,7 +24,7 @@ function create-LogonTask {
         /sc ONLOGON `
         /tn "DisableOutlookMigration" `
         /tr "powershell.exe -ExecutionPolicy Bypass -File C:\ProgramData\Scripts\SetRegistryKeys.ps1" `
-        /ru "$($env:USERDOMAIN)\$($env:USERNAME)" `
+        /ru "BENUTZER" `
         /it `
         /rl LIMITED `
         /f
