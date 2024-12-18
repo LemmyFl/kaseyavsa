@@ -1,8 +1,8 @@
 <#
 .NOTES
-  Version:          1.3.0
+  Version:          1.4.0
   Author:           <LemmyFL>
-  Last Change Date: 17.12.2024
+  Last Change Date: 18.12.2024
   Purpose:          Download and execute SetRegistryKeys.ps1 script, and create a scheduled task for user logon.
 #>
 
