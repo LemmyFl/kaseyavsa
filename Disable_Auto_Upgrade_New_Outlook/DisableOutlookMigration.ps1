@@ -8,7 +8,7 @@
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
-$ScriptDirectory = "C:\kworking"
+$ScriptDirectory = "C:\scripts"
 $DownloadedScript = Join-Path -Path $ScriptDirectory -ChildPath "SetRegistryKeys.ps1"
 $TaskName = "DisableOutlookMigration"
 
@@ -23,16 +23,17 @@ function create-LogonTask {
     schtasks /create `
         /sc ONLOGON `
         /tn "DisableOutlookMigration" `
-        /tr "powershell.exe -ExecutionPolicy Bypass -File C:\kworking\SetRegistryKeys.ps1" `
+        /tr "powershell.exe -ExecutionPolicy Bypass -File C:\scripts\SetRegistryKeys.ps1" `
         /ru "SYSTEM" `
         /rl HIGHEST `
         /f
 }
 
 #-----------------------------------------------------------[Execution]-----------------------------------------------------------
+mkdir "C:\scripts"
 
 Download-SetRegistryKeys
 
 create-LogonTask
 
-& "C:\kworking\SetRegistryKeys.ps1"
+& "C:\scripts\SetRegistryKeys.ps1"
