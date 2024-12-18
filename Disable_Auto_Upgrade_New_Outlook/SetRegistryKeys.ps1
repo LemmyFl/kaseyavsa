@@ -16,10 +16,10 @@ $RegistryValues = @{
     'DoNewOutlookAutoMigration'             = 0
 }
 
-$RegPath = "Registry::HKEY_CURRENT_USER\$RegistrySubPath"
-
-New-Item -Path $RegPath -Force -ErrorAction SilentlyContinue | Out-Null
-
-foreach ($Key in $RegistryValues.Keys) {
-    Set-ItemProperty -Path $RegPath -Name $Key -Value $RegistryValues[$Key] -Type DWord -Force
+foreach ($UserSid in (Get-ChildItem HKU: | Where-Object { $_.Name -match 'S-1-5-21-\d+-\d+-\d+-\d+$' })) {
+    $RegPath = "Registry::$($UserSid.PSChildName)\$RegistrySubPath"
+    New-Item -Path $RegPath -Force | Out-Null
+    foreach ($Key in $RegistryValues.Keys) {
+        Set-ItemProperty -Path $RegPath -Name $Key -Value $RegistryValues[$Key] -Type DWord -Force
+    }
 }
