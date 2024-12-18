@@ -21,10 +21,10 @@ function Download-SetRegistryKeys {
 
 function create-LogonTask {
     schtasks /create `
-        /tn "DisableOutlookMigration" `
-        /tr "powershell.exe -ExecutionPolicy Bypass -File `\"C:\ProgramData\Scripts\SetRegistryKeys.ps1`\"" `
         /sc ONLOGON `
-        /ru "$env:USERDOMAIN\$env:USERNAME" `
+        /tn "DisableOutlookMigration" `
+        /tr "powershell.exe -ExecutionPolicy Bypass -File C:\ProgramData\Scripts\SetRegistryKeys.ps1" `
+        /ru "$($env:USERDOMAIN)\$($env:USERNAME)" `
         /it `
         /rl LIMITED `
         /f
