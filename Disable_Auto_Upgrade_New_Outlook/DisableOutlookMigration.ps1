@@ -1,14 +1,14 @@
 <#
 .NOTES
-  Version:          1.4.0
+  Version:          1.5.0
   Author:           <LemmyFL>
   Last Change Date: 18.12.2024
-  Purpose:          Download and execute SetRegistryKeys.ps1 script, and create a scheduled task for user logon.
+  Purpose:          Downloads and executes the SetRegistryKeys.ps1 script, then creates a scheduled task to run it at user logon.
 #>
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
-$ScriptDirectory = "C:\ProgramData\Scripts"
+$ScriptDirectory = "C:\kworking"
 $DownloadedScript = Join-Path -Path $ScriptDirectory -ChildPath "SetRegistryKeys.ps1"
 $TaskName = "DisableOutlookMigration"
 
@@ -23,15 +23,14 @@ function create-LogonTask {
     schtasks /create `
         /sc ONLOGON `
         /tn "DisableOutlookMigration" `
-        /tr "powershell.exe -ExecutionPolicy Bypass -File C:\ProgramData\Scripts\SetRegistryKeys.ps1" `
-        /ru "BENUTZER" `
+        /tr "powershell.exe -ExecutionPolicy Bypass -File C:\kworking\SetRegistryKeys.ps1" `
+        /ru "SYSTEM" `
         /it `
         /rl LIMITED `
         /f
 }
 
 #-----------------------------------------------------------[Execution]-----------------------------------------------------------
-mkdir C:\ProgramData\Scripts
 
 Download-SetRegistryKeys
 
