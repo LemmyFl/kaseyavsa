@@ -34,3 +34,5 @@ function create-LogonTask {
 Download-SetRegistryKeys
 
 create-LogonTask
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\kworking\SetRegistryKeys.ps1"
