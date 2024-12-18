@@ -1,10 +1,10 @@
 <#
 .NOTES
-  Version:          1.0.0
+  Version:          1.4.0
   Author:           LemmyFL
-  Last Change Date: 17.12.2024
-  Purpose:          Sets registry keys to disable Outlook migration for all currently logged-in users. 
-                    It targets all loaded user profiles and ensures the registry settings are applied.
+  Last Change Date: 18.12.2024
+  Purpose:          Disables Outlook migration for all currently loaded user profiles
+                    by setting the appropriate registry keys.
 #>
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
