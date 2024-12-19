@@ -9,15 +9,9 @@
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 $ScriptDirectory = "C:\scripts"
-$DownloadedScript = Join-Path -Path $ScriptDirectory -ChildPath "SetRegistryKeys.ps1"
 $TaskName = "DisableOutlookMigration"
 
 #-----------------------------------------------------------[Functions]-----------------------------------------------------------
-
-function Download-SetRegistryKeys {
-
-    Invoke-WebRequest -Uri "https://raw.githubusercontent.com/LemmyFl/kaseyavsa/refs/heads/main/Disable_Auto_Upgrade_New_Outlook/SetRegistryKeys.ps1" -OutFile $DownloadedScript
-}
 
 function create-LogonTask {
     schtasks /create `
@@ -30,10 +24,6 @@ function create-LogonTask {
 }
 
 #-----------------------------------------------------------[Execution]-----------------------------------------------------------
-
-mkdir "C:\scripts" -Force
-
-Download-SetRegistryKeys
 
 create-LogonTask
 
