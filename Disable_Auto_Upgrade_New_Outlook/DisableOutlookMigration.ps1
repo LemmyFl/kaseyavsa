@@ -31,9 +31,9 @@ function create-LogonTask {
 
 #-----------------------------------------------------------[Execution]-----------------------------------------------------------
 
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
 
-mkdir "C:\scripts"
+mkdir "C:\scripts" -Force
 
 Download-SetRegistryKeys
 
